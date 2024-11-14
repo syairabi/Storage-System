@@ -10,7 +10,8 @@ export class AuthController {
       // Check if user already exists
       const existingUser = await User.findOne({ username });
       if (existingUser) {
-        return res.status(400).json({ error: 'Username already exists' });
+        res.status(400).json({ error: 'Username already exists' });
+        return;
       }
 
       // Create new user
@@ -38,13 +39,16 @@ export class AuthController {
       // Find user
       const user = await User.findOne({ username });
       if (!user) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
+        res.status(401).json({ error: 'Invalid credentials' });
+        
+
+        return       }
 
       // Check password
       const isMatch = await user.comparePassword(password);
       if (!isMatch) {
-        return res.status(401).json({ error: 'Invalid credentials' });
+        res.status(401).json({ error: 'Invalid credentials' });
+        return;
       }
 
       // Generate token
