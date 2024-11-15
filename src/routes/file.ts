@@ -3,6 +3,7 @@ import multer from 'multer';
 import { FileController } from '../controllers/fileController';
 import { auth } from '../middleware/auth';
 import { FileUtils } from '../utils/fileUtils';
+import path from 'node:path';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

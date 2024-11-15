@@ -43,7 +43,8 @@ export class MaintenanceController {
       const maintenance = await MaintenanceSchedule.findById(maintenanceId);
       
       if (!maintenance) {
-        return res.status(404).json({ error: 'Maintenance schedule not found' });
+        res.status(404).json({ error: 'Maintenance schedule not found' });
+        return;
       }
 
       const files = await File.find();

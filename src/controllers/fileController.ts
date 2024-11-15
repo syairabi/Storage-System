@@ -6,21 +6,21 @@ import { FileUtils } from '../utils/fileUtils';
 import { IUser } from '../models/User';
 
 // Define custom request interfaces
-interface MulterRequest extends Request {
-    file: Express.Multer.File;
+interface MulterRequest extends Request, AuthRequest {
+    file?: Express.Multer.File;
 }
 
 interface AuthRequest extends Request {
     user?: IUser;
-    file?: Express.Multer.File;
 }
 
 export class FileController {
     // Upload a new file
-    static async uploadFile(req: AuthRequest & MulterRequest, res: Response) {
+    static async uploadFile(req: MulterRequest, res: Response) {
         try {
             if (!req.file) {
-                return res.status(400).json({ error: 'No file provided' });
+                res.status(400).json({ error: 'No file provided' });
+                return;
             }
 
             const uploadedFile = new File({
@@ -76,10 +76,8 @@ export class FileController {
                 .populate('uploadedBy', 'username');
             
             if (!file) {
-                return res.status(404).json({
-                    success: false,
-                    error: 'File not found'
-                });
+                res.status(404).json({success: false,error: 'File not found'});
+                return;
             }
 
             res.json({
@@ -101,18 +99,14 @@ export class FileController {
         try {
             const file = await File.findById(req.params.id);
             if (!file) {
-                return res.status(404).json({
-                    success: false,
-                    error: 'File not found'
-                });
+                res.status(404).json({success: false, error: 'File not found'});
+                return;
             }
 
             // Check if file exists in filesystem
             if (!fs.existsSync(file.path)) {
-                return res.status(404).json({
-                    success: false,
-                    error: 'File not found in storage'
-                });
+                res.status(404).json({success: false, error: 'File not found in storage'});
+                return;
             }
 
             res.download(file.path, file.filename);
@@ -131,18 +125,14 @@ export class FileController {
         try {
             const file = await File.findById(req.params.id);
             if (!file) {
-                return res.status(404).json({
-                    success: false,
-                    error: 'File not found'
-                });
+                res.status(404).json({success: false, error: 'File not found'});
+                return;
             }
 
             // Check if original file exists
             if (!fs.existsSync(file.path)) {
-                return res.status(404).json({
-                    success: false,
-                    error: 'Original file not found in storage'
-                });
+                res.status(404).json({success: false, error: 'Original file not found in storage'});
+                return;
             }
 
             const backupPath = await FileUtils.createBackup(
@@ -174,10 +164,8 @@ export class FileController {
         try {
             const file = await File.findById(req.params.id);
             if (!file) {
-                return res.status(404).json({
-                    success: false,
-                    error: 'File not found'
-                });
+                res.status(404).json({success: false, error: 'File not found'});
+                return;
             }
 
             // Delete physical file if it exists
@@ -239,10 +227,8 @@ export class FileController {
             const file = await File.findById(req.params.id);
 
             if (!file) {
-                return res.status(404).json({
-                    success: false,
-                    error: 'File not found'
-                });
+                res.status(404).json({success: false, error: 'File not found'});
+                return;
             }
 
             if (filename) {
@@ -271,10 +257,8 @@ export class FileController {
         try {
             const file = await File.findById(req.params.id);
             if (!file) {
-                return res.status(404).json({
-                    success: false,
-                    error: 'File not found'
-                });
+                res.status(404).json({success: false, error: 'File not found'});
+                return;
             }
 
             // Return backup information if it exists
