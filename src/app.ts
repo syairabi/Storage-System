@@ -19,10 +19,11 @@ app.set('views', join(__dirname, '..', 'views'));
 app.use(express.static(join(__dirname, '..', 'public')))
 
 // Connect to MongoDB
-connectDB();
+//connectDB();
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/file', fileRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 3000;

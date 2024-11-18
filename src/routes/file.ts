@@ -15,9 +15,14 @@ const storage = multer.diskStorage({
   }
 });
 
+
 const upload = multer({ storage });
 
 const router = express.Router();
+
+router.get('/homepage', (req, res)=>{
+  res.render('homepage.ejs');
+})
 
 router.post('/upload', auth, upload.single('file'), FileController.uploadFile);
 router.get('/', auth, FileController.getAllFiles);
