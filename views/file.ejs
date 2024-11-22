@@ -1,0 +1,390 @@
+<!-- views/files.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Files - File Storage System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 70px;
+            background: #0056B3;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .nav-item {
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-link i {
+            text-align: center;
+        }
+
+        .nav-tooltip {
+            position: absolute;
+            left: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-link:hover .nav-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            margin-left: 70px;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .content-header {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .content-header h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            background: #f5f5f5;
+            margin-right: 10px;
+            border-radius: 10px 10px 0 0;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom: 2px solid white;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Table Styles */
+        .file-list {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        table-layout: fixed; /* Ensures consistent column width */
+    }
+
+    .file-list th,
+    .file-list td {
+        padding: 15px; /* Consistent padding for table cells */
+        text-align: center; /* Center-align table header and data */
+        border: 1px solid #ddd; /* Add grid border to table */
+    }
+
+    .file-list th {
+        background-color: #f8f9fa;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .tab-content {
+        display: none;
+        background: white;
+        padding: 20px;
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    .tab-container {
+        display: flex;
+        margin-bottom: 20px;
+        gap: 10px; /* Add consistent gap between tabs */
+    }
+    </style>
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+        <div class="nav-item">
+            <a href="/dashboard" class="nav-link">
+                <i class="fas fa-home"></i>
+                <span class="nav-tooltip">Home</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/files" class="nav-link active">
+                <i class="fas fa-file"></i>
+                <span class="nav-tooltip">Files</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/update" class="nav-link">
+                <i class="fas fa-sync"></i>
+                <span class="nav-tooltip">Update</span>
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <div class="content-header">
+    <h1>Dashboard</h1>
+</div>
+
+<!-- Tab Container with Search Bar -->
+<div class="tab-container" style="display: flex; justify-content: space-between; align-items: center;">
+    <!-- Tabs -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <div class="tab active" data-tab="software">Software</div>
+        <div class="tab" data-tab="hardware">Hardware</div>
+        <div class="tab" data-tab="upload">Upload</div>
+    </div>
+
+    <!-- Search Bar -->
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-search" style="color: #555; font-size: 18px;"></i>
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search for data..."
+            style="
+                padding: 8px;
+                font-size: 14px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                width: 250px;
+            "
+        />
+    </div>
+</div>
+
+<!-- Software Section -->
+<div id="software" class="tab-content active">
+    <table class="file-list" id="softwareTable">
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Quarter</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>2024</td>
+                <td>Q1</td>
+                <td>Kuala Lumpur</td>
+            </tr>
+            <tr>
+                <td>2024</td>
+                <td>Q2</td>
+                <td>Penang</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Hardware Section -->
+<div id="hardware" class="tab-content">
+    <table class="file-list" id="hardwareTable">
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Quarter</th>
+                <th>Location</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>2024</td>
+                <td>Q1</td>
+                <td>Selangor</td>
+            </tr>
+            <tr>
+                <td>2024</td>
+                <td>Q2</td>
+                <td>Johor</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Upload Section -->
+<div id="upload" class="tab-content">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+        <h2>Upload Your Files</h2>
+        <div
+            style="
+                width: 100%;
+                max-width: 600px;
+                height: 200px;
+                border: 2px dashed #ccc;
+                border-radius: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #555;
+                font-size: 16px;
+                cursor: pointer;
+            "
+            id="dropZone"
+        >
+            Drag and drop files here or click to browse
+        </div>
+        <input type="file" id="fileUpload" multiple style="display: none;" />
+        <button
+            style="
+                padding: 10px 20px;
+                background: #0056B3;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                font-size: 14px;
+                cursor: pointer;
+            "
+            onclick="uploadFiles()"
+        >
+            Upload Files
+        </button>
+    </div>
+</div>
+
+<script>
+    // Tab switching logic
+    const tabs = document.querySelectorAll('.tab');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs and contents
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+
+            // Add active class to the selected tab and corresponding content
+            tab.classList.add('active');
+            document.getElementById(tab.dataset.tab)?.classList.add('active');
+        });
+    });
+
+    // Drag and Drop Logic
+    const dropZone = document.getElementById('dropZone');
+    const fileUpload = document.getElementById('fileUpload');
+
+    dropZone.addEventListener('click', () => fileUpload.click());
+
+    dropZone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        dropZone.style.borderColor = '#0056B3';
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.borderColor = '#ccc';
+    });
+
+    dropZone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        dropZone.style.borderColor = '#ccc';
+        const files = event.dataTransfer.files;
+        handleFiles(files);
+    });
+
+    fileUpload.addEventListener('change', (event) => {
+        const files = event.target.files;
+        handleFiles(files);
+    });
+
+    function handleFiles(files) {
+        if (files.length) {
+            alert(`${files.length} file(s) selected.`);
+            // Handle file uploads here (e.g., via FormData and API)
+        }
+    }
+
+    function uploadFiles() {
+        alert('Files uploaded successfully!');
+        // Add your upload logic here
+    }
+</script>
+
+
+
+</body>
+</html>

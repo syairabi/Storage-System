@@ -24,6 +24,10 @@ router.get('/homepage', (req, res)=>{
   res.render('homepage.ejs');
 })
 
+router.get('/file', (req, res)=>{
+  res.render('file.ejs');
+})
+
 router.post('/upload', auth, upload.single('file'), FileController.uploadFile);
 router.get('/', auth, FileController.getAllFiles);
 router.get('/download/:id', auth, FileController.downloadFile);

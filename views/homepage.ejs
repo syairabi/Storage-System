@@ -21,60 +21,74 @@
 
         /* Sidebar Styles */
         .sidebar {
-            width: 250px;
+            width: 70px;
             background: #0056B3;
             color: white;
-            padding: 20px 0;
             position: fixed;
             height: 100vh;
             left: 0;
             top: 0;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .nav-menu {
-            list-style: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 20px;
         }
 
         .nav-item {
-            padding: 0 20px;
-            margin-bottom: 10px;
+            margin: 20px 0;
+            position: relative;
         }
 
         .nav-link {
             display: flex;
+            justify-content: center;
             align-items: center;
-            padding: 12px 15px;
             color: white;
             text-decoration: none;
-            border-radius: 5px;
+            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
             transition: all 0.3s ease;
         }
 
         .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-link.active {
             background: rgba(255, 255, 255, 0.2);
         }
 
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
         .nav-link i {
-            margin-right: 10px;
-            width: 20px;
             text-align: center;
+        }
+
+        .nav-tooltip {
+            position: absolute;
+            left: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-link:hover .nav-tooltip {
+            opacity: 1;
+            visibility: visible;
         }
 
         /* Main Content Area */
         .main-content {
             flex: 1;
-            margin-left: 250px;
+            margin-left: 70px;
             padding: 20px;
             background: #f5f5f5;
         }
@@ -125,88 +139,39 @@
             background: linear-gradient(45deg, #0056B3, #1E90FF);
             color: white;
         }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 70px;
-            }
-
-            .sidebar-header h2,
-            .nav-link span {
-                display: none;
-            }
-
-            .main-content {
-                margin-left: 70px;
-            }
-
-            .nav-link i {
-                margin-right: 0;
-            }
-
-            .nav-item {
-                padding: 0 10px;
-            }
-        }
     </style>
 </head>
 <body>
     <!-- Sidebar Navigation -->
     <nav class="sidebar">
-        <div class="sidebar-header">
-            <h2>File System</h2>
+        <div class="nav-item">
+            <a href="/dashboard" class="nav-link active">
+                <i class="fas fa-home"></i>
+                <span class="nav-tooltip">Home</span>
+            </a>
         </div>
-        <ul class="nav-menu">
-            <li class="nav-item">
-                <a href="/dashboard" class="nav-link active">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="/files" class="nav-link">
-                    <i class="fas fa-file"></i>
-                    <span>Files</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="/update" class="nav-link">
-                    <i class="fas fa-sync"></i>
-                    <span>Update</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="/settings" class="nav-link">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </a>
-            </li>
-        </ul>
+        <div class="nav-item">
+            <a href="/files" class="nav-link">
+                <i class="fas fa-file"></i>
+                <span class="nav-tooltip">Files</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/update" class="nav-link">
+                <i class="fas fa-sync"></i>
+                <span class="nav-tooltip">Update</span>
+            </a>
+        </div>
     </nav>
 
     <!-- Main Content Area -->
     <main class="main-content">
         <div class="content-header">
-            <h1>Dashboard</h1>
+            <h1>Welcome</h1>
         </div>
         
         <div class="content-body">
-            <table class="file-list">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Details</th>
-                        <th>Date</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="fileListBody">
-                    <!-- File list will be populated dynamically -->
-                </tbody>
-            </table>
+            
         </div>
     </main>
 
@@ -215,8 +180,7 @@
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function() {
                 // Remove active class from all links
-                document.querySelectorAll('.nav-link').forEach(l => 
-                    l.classList.remove('active'));
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
                 // Add active class to clicked link
                 this.classList.add('active');
             });
