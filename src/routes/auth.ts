@@ -8,7 +8,8 @@ router.get('/login', (req, res)=>{
 })
 
 // Use static methods directly from the class
-router.post('/register', AuthController.register);
+//router.post('/register', AuthController.register);
 router.post('/login', AuthController.login);
 
+router.get('/createuser', AuthController.CreateUser);
 export default router;

@@ -9,6 +9,7 @@ import maintenanceRoutes from './routes/maintenance';
 
 // Load environment variables
 dotenv.config();
+connectDB();
 
 // Initialize Express app
 const app = express();

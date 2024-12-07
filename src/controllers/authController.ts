@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import User, { IUser } from '../models/User';
 
 export class AuthController {
-  static async register(req: Request, res: Response) {
+  /*static async register(req: Request, res: Response) {
     try {
       const { username, password } = req.body;
 
@@ -28,6 +28,49 @@ export class AuthController {
 
       res.status(201).json({ user, token });
     } catch (error) {
+      res.status(500).json({ error: 'Error creating user' });
+    }
+  }*/
+
+  static async CreateUser(req: Request, res: Response) {
+    try {
+      const users = [
+        {
+          username: "Fakhrul",
+          password: "mrl@2024!" 
+        },
+        {
+          username: "Faiz",
+          password: "mrl@2024!" 
+        },
+        {
+          username: "Syairazi",
+          password: "mrl@2024!" 
+        },
+      ]
+
+      users.forEach(async u=>{
+        // Check if user already exists
+      const existingUser = await User.findOne({ username: u.username });
+      if (existingUser) {
+        
+        return;
+      }
+
+      // Create new user
+      const user = new User({
+        username: u.username,
+        password: u.password,
+      });
+      await user.save();
+
+      })
+
+      
+
+      res.status(201).json({message:"Success"});
+    } catch (error) {
+      console.log (error)
       res.status(500).json({ error: 'Error creating user' });
     }
   }
