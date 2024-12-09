@@ -221,11 +221,14 @@
 
     <!-- Search Bar -->
     <div style="display: flex; align-items: center; gap: 10px;">
+        <button style="background-color: #555; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+            <i class="fas fa-plus"></i>
+        </button>
         <i class="fas fa-search" style="color: #555; font-size: 18px;"></i>
         <input
             type="text"
             id="searchInput"
-            placeholder="Search for data..."
+            placeholder="Search for file..."
             style="
                 padding: 8px;
                 font-size: 14px;
@@ -242,21 +245,21 @@
     <table class="file-list" id="softwareTable">
         <thead>
             <tr>
-                <th>Year</th>
-                <th>Quarter</th>
+                <th>Name</th>
+                <th>Date Modified</th>
                 <th>Location</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>2024</td>
-                <td>Q1</td>
-                <td>Kuala Lumpur</td>
+                <td>Firewall</td>
+                <td>9/12/2024</td>
+                <td>Cloudflare</td>
             </tr>
             <tr>
-                <td>2024</td>
-                <td>Q2</td>
-                <td>Penang</td>
+                <td>Database</td>
+                <td>8/12/2024</td>
+                <td>AWS</td>
             </tr>
         </tbody>
     </table>
@@ -267,21 +270,21 @@
     <table class="file-list" id="hardwareTable">
         <thead>
             <tr>
-                <th>Year</th>
-                <th>Quarter</th>
+                <th>Name</th>
+                <th>Date Modified</th>
                 <th>Location</th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>2024</td>
-                <td>Q1</td>
-                <td>Switch</td>
+                <td>Switches</td>
+                <td>7/12/2024</td>
+                <td>HQ</td>
             </tr>
             <tr>
-                <td>2024</td>
-                <td>Q2</td>
-                <td>Sensors</td>
+                <td>Routers</td>
+                <td>1/12/2024</td>
+                <td>HQ</td>
             </tr>
         </tbody>
     </table>
@@ -380,11 +383,9 @@
 
     function uploadFiles() {
         alert('Files uploaded successfully!');
-        // Add your upload logic here
+        
     }
 </script>
-
-
 
 </body>
 </html>
