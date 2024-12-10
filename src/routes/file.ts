@@ -31,6 +31,9 @@ router.get('/file', (req, res)=>{
 router.get('/update', (req, res)=>{
   res.render('update.ejs');
 })
+router.get('/logout', (req, res)=>{
+  res.render('logout.ejs');
+})
 
 router.post('/upload', auth, upload.single('file'), FileController.uploadFile);
 router.get('/', auth, FileController.getAllFiles);

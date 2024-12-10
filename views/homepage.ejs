@@ -139,6 +139,54 @@
             background: linear-gradient(45deg, #0056B3, #1E90FF);
             color: white;
         }
+        .logout-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 1000;
+            width: 300px;
+        }
+
+        .logout-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .logout-popup-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .logout-popup-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-popup-cancel {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .logout-popup-confirm {
+            background-color: #0056B3;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -160,6 +208,12 @@
             <a href="/api/file/update" class="nav-link">
                 <i class="fas fa-sync"></i>
                 <span class="nav-tooltip">Update</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="/api/auth/login" class="nav-link">
+                <i class="fas fa-sign-out"></i>
+                <span class="nav-tooltip">Logout</span>
             </a>
         </div>
     </nav>
@@ -222,6 +276,48 @@
 
         // Initial load
         fetchFiles();
+
+        document.querySelector('.nav-item a[href="/api/auth/login"]').addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent direct navigation
+
+            // Create popup overlay
+            const overlayEl = document.createElement('div');
+            overlayEl.classList.add('logout-popup-overlay');
+
+            // Create popup
+            const popupEl = document.createElement('div');
+            popupEl.classList.add('logout-popup');
+            popupEl.innerHTML = `
+                <h3>Confirm Logout</h3>
+                <p>Are you sure you want to log out?</p>
+                <div class="logout-popup-buttons">
+                    <button class="logout-popup-btn logout-popup-cancel">Cancel</button>
+                    <button class="logout-popup-btn logout-popup-confirm">Logout</button>
+                </div>
+            `;
+
+            // Append to body
+            document.body.appendChild(overlayEl);
+            document.body.appendChild(popupEl);
+
+            // Cancel button
+            popupEl.querySelector('.logout-popup-cancel').addEventListener('click', function() {
+                document.body.removeChild(overlayEl);
+                document.body.removeChild(popupEl);
+            });
+
+            // Confirm logout button
+            popupEl.querySelector('.logout-popup-confirm').addEventListener('click', function() {
+                // Redirect to login page
+                window.location.href = '/api/auth/login';
+            });
+
+            // Close popup if overlay is clicked
+            overlayEl.addEventListener('click', function() {
+                document.body.removeChild(overlayEl);
+                document.body.removeChild(popupEl);
+            });
+        });
     </script>
 </body>
 </html>

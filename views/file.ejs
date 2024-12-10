@@ -109,6 +109,7 @@
         .tab-container {
             display: flex;
             margin-bottom: 20px;
+            gap: 10px; /* Add consistent gap between tabs */
         }
 
         .tab {
@@ -117,68 +118,111 @@
             border: 1px solid #ddd;
             border-bottom: none;
             background: #f5f5f5;
-            margin-right: 10px;
-            border-radius: 10px 10px 0 0;
             color: #333;
             font-weight: bold;
+            border-radius: 5px 5px 0 0;
         }
 
         .tab.active {
             background: white;
-            border-bottom: 2px solid white;
+            border-color: #ddd;
+            border-bottom-color: white;
         }
 
         .tab-content {
             display: none;
             background: white;
             padding: 20px;
-            border-radius: 0 0 10px 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .tab-content.active {
             display: block;
         }
 
-        /* Table Styles */
         .file-list {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-        table-layout: fixed; /* Ensures consistent column width */
-    }
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            table-layout: fixed;
+            font-size: 14px;
+        }
 
-    .file-list th,
-    .file-list td {
-        padding: 15px; /* Consistent padding for table cells */
-        text-align: center; /* Center-align table header and data */
-        border: 1px solid #ddd; /* Add grid border to table */
-    }
+        .file-list th,
+        .file-list td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
 
-    .file-list th {
-        background-color: #f8f9fa;
-        color: #333;
-        font-weight: bold;
-    }
+        .file-list th {
+            background-color: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+        }
 
-    .tab-content {
-        display: none;
-        background: white;
-        padding: 20px;
-        border-radius: 0 0 10px 10px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-    }
+        .file-list td {
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
 
-    .tab-content.active {
-        display: block;
-    }
+        .file-list td:hover {
+            background-color: #f5f5f5;
+        }
 
-    .tab-container {
-        display: flex;
-        margin-bottom: 20px;
-        gap: 10px; /* Add consistent gap between tabs */
-    }
+        .file-list td i {
+            margin-right: 5px;
+        }
+        .logout-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            z-index: 1000;
+            width: 300px;
+        }
+
+        .logout-popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .logout-popup-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .logout-popup-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-popup-cancel {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .logout-popup-confirm {
+            background-color: #0056B3;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -202,190 +246,237 @@
                 <span class="nav-tooltip">Update</span>
             </a>
         </div>
+        <div class="nav-item">
+            <a href="/api/auth/login" class="nav-link">
+                <i class="fas fa-sign-out"></i>
+                <span class="nav-tooltip">Logout</span>
+            </a>
+        </div>
     </nav>
 
     <!-- Main Content Area -->
     <main class="main-content">
         <div class="content-header">
-    <h1>Dashboard</h1>
-</div>
-
-<!-- Tab Container with Search Bar -->
-<div class="tab-container" style="display: flex; justify-content: space-between; align-items: center;">
-    <!-- Tabs -->
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <div class="tab active" data-tab="software">Software</div>
-        <div class="tab" data-tab="hardware">Hardware</div>
-        <div class="tab" data-tab="upload">Upload</div>
-    </div>
-
-    <!-- Search Bar -->
-    <div style="display: flex; align-items: center; gap: 10px;">
-        <button style="background-color: #555; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
-            <i class="fas fa-plus"></i>
-        </button>
-        <i class="fas fa-search" style="color: #555; font-size: 18px;"></i>
-        <input
-            type="text"
-            id="searchInput"
-            placeholder="Search for file..."
-            style="
-                padding: 8px;
-                font-size: 14px;
-                border: 1px solid #ddd;
-                border-radius: 5px;
-                width: 250px;
-            "
-        />
-    </div>
-</div>
-
-<!-- Software Section -->
-<div id="software" class="tab-content active">
-    <table class="file-list" id="softwareTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Date Modified</th>
-                <th>Location</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Firewall</td>
-                <td>9/12/2024</td>
-                <td>Cloudflare</td>
-            </tr>
-            <tr>
-                <td>Database</td>
-                <td>8/12/2024</td>
-                <td>AWS</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<!-- Hardware Section -->
-<div id="hardware" class="tab-content">
-    <table class="file-list" id="hardwareTable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Date Modified</th>
-                <th>Location</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Switches</td>
-                <td>7/12/2024</td>
-                <td>HQ</td>
-            </tr>
-            <tr>
-                <td>Routers</td>
-                <td>1/12/2024</td>
-                <td>HQ</td>
-            </tr>
-        </tbody>
-    </table>
-</div>
-
-<!-- Upload Section -->
-<div id="upload" class="tab-content">
-    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
-        <h2>Upload Your Files</h2>
-        <div
-            style="
-                width: 100%;
-                max-width: 600px;
-                height: 200px;
-                border: 2px dashed #ccc;
-                border-radius: 10px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                color: #555;
-                font-size: 16px;
-                cursor: pointer;
-            "
-            id="dropZone"
-        >
-            Drag and drop files here or click to browse
+            <h1>Dashboard</h1>
         </div>
-        <input type="file" id="fileUpload" multiple style="display: none;" />
-        <button
-            style="
-                padding: 10px 20px;
-                background: #0056B3;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                font-size: 14px;
-                cursor: pointer;
-            "
-            onclick="uploadFiles()"
-        >
-            Upload Files
-        </button>
-    </div>
-</div>
 
-<script>
-    // Tab switching logic
-    const tabs = document.querySelectorAll('.tab');
-    const contents = document.querySelectorAll('.tab-content');
+        <!-- Tab Container with Search Bar -->
+        <div class="tab-container" style="display: flex; justify-content: space-between; align-items: center;">
+            <!-- Tabs -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="tab active" data-tab="software">Software</div>
+                <div class="tab" data-tab="hardware">Hardware</div>
+                <div class="tab" data-tab="upload">Upload</div>
+            </div>
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            // Remove active class from all tabs and contents
-            tabs.forEach(t => t.classList.remove('active'));
-            contents.forEach(c => c.classList.remove('active'));
+            <!-- Search Bar -->
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button style="background-color: #555; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                    <i class="fas fa-plus"></i>
+                </button>
+                <i class="fas fa-search" style="color: #555; font-size: 18px;"></i>
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search for file..."
+                    style="
+                        padding: 8px;
+                        font-size: 14px;
+                        border: 1px solid #ddd;
+                        border-radius: 5px;
+                        width: 250px;
+                    "
+                />
+            </div>
+        </div>
 
-            // Add active class to the selected tab and corresponding content
-            tab.classList.add('active');
-            document.getElementById(tab.dataset.tab)?.classList.add('active');
+        <!-- Software Section -->
+        <div id="software" class="tab-content active">
+            <table class="file-list" id="softwareTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Date Modified</th>
+                        <th>Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><i class="fas fa-file"></i> Firewall</td>
+                        <td>9/12/2024</td>
+                        <td>Cloudflare</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-file"></i> Database</td>
+                        <td>8/12/2024</td>
+                        <td>AWS</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Hardware Section -->
+        <div id="hardware" class="tab-content">
+            <table class="file-list" id="hardwareTable">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-file"></i> Name</th>
+                        <th><i class="fas fa-calendar-alt"></i> Date Modified</th>
+                        <th><i class="fas fa-map-marker-alt"></i> Location</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><i class="fas fa-file"></i> Switches</td>
+                        <td>7/12/2024</td>
+                        <td>HQ</td>
+                    </tr>
+                    <tr>
+                        <td><i class="fas fa-file"></i> Routers</td>
+                        <td>1/12/2024</td>
+                        <td>HQ</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Upload Section -->
+        <div id="upload" class="tab-content">
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
+                <h2>Upload Your Files</h2>
+                <div
+                    style="
+                        width: 100%;
+                        max-width: 600px;
+                        height: 200px;
+                        border: 2px dashed #ccc;
+                        border-radius: 10px;
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        color: #555;
+                        font-size: 16px;
+                        cursor: pointer;
+                    "
+                    id="dropZone"
+                >
+                    Drag and drop files here or click to browse
+                </div>
+                <input type="file" id="fileUpload" multiple style="display: none;" />
+                <button
+                    style="
+                        padding: 10px 20px;
+                        background: #0056B3;
+                        color: white;
+                        border: none;
+                        border-radius: 5px;
+                        font-size: 14px;
+                        cursor: pointer;
+                    "
+                    onclick="uploadFiles()"
+                >
+                    Upload Files
+                </button>
+            </div>
+        </div>
+
+        <script>
+            // Tab switching logic
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+
+                    // Add active class to the selected tab and corresponding content
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab)?.classList.add('active');
+                });
+            });
+
+            // Drag and Drop Logic
+            const dropZone = document.getElementById('dropZone');
+            const fileUpload = document.getElementById('fileUpload');
+
+            dropZone.addEventListener('click', () => fileUpload.click());
+
+            dropZone.addEventListener('dragover', (event) => {
+                event.preventDefault();
+                dropZone.style.borderColor = '#0056B3';
+            });
+
+            dropZone.addEventListener('dragleave', () => {
+                dropZone.style.borderColor = '#ccc';
+            });
+
+            dropZone.addEventListener('drop', (event) => {
+                event.preventDefault();
+                dropZone.style.borderColor = '#ccc';
+                const files = event.dataTransfer.files;
+                handleFiles(files);
+            });
+
+            fileUpload.addEventListener('change', (event) => {
+                const files = event.target.files;
+                handleFiles(files);
+            });
+
+            function handleFiles(files) {
+                if (files.length) {
+                    alert(`${files.length} file(s) selected.`);
+                    // Handle file uploads here (e.g., via FormData and API)
+                }
+            }
+
+            function uploadFiles() {
+                alert('Files uploaded successfully!');
+            }
+            
+            document.querySelector('.nav-item a[href="/api/auth/login"]').addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent direct navigation
+
+            // Create popup overlay
+            const overlayEl = document.createElement('div');
+            overlayEl.classList.add('logout-popup-overlay');
+
+            // Create popup
+            const popupEl = document.createElement('div');
+            popupEl.classList.add('logout-popup');
+            popupEl.innerHTML = `
+                <h3>Confirm Logout</h3>
+                <p>Are you sure you want to log out?</p>
+                <div class="logout-popup-buttons">
+                    <button class="logout-popup-btn logout-popup-cancel">Cancel</button>
+                    <button class="logout-popup-btn logout-popup-confirm">Logout</button>
+                </div>
+            `;
+
+            // Append to body
+            document.body.appendChild(overlayEl);
+            document.body.appendChild(popupEl);
+
+            // Cancel button
+            popupEl.querySelector('.logout-popup-cancel').addEventListener('click', function() {
+                document.body.removeChild(overlayEl);
+                document.body.removeChild(popupEl);
+            });
+
+            // Confirm logout button
+            popupEl.querySelector('.logout-popup-confirm').addEventListener('click', function() {
+                // Redirect to login page
+                window.location.href = '/api/auth/login';
+            });
+
+            // Close popup if overlay is clicked
+            overlayEl.addEventListener('click', function() {
+                document.body.removeChild(overlayEl);
+                document.body.removeChild(popupEl);
+            });
         });
-    });
-
-    // Drag and Drop Logic
-    const dropZone = document.getElementById('dropZone');
-    const fileUpload = document.getElementById('fileUpload');
-
-    dropZone.addEventListener('click', () => fileUpload.click());
-
-    dropZone.addEventListener('dragover', (event) => {
-        event.preventDefault();
-        dropZone.style.borderColor = '#0056B3';
-    });
-
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.style.borderColor = '#ccc';
-    });
-
-    dropZone.addEventListener('drop', (event) => {
-        event.preventDefault();
-        dropZone.style.borderColor = '#ccc';
-        const files = event.dataTransfer.files;
-        handleFiles(files);
-    });
-
-    fileUpload.addEventListener('change', (event) => {
-        const files = event.target.files;
-        handleFiles(files);
-    });
-
-    function handleFiles(files) {
-        if (files.length) {
-            alert(`${files.length} file(s) selected.`);
-            // Handle file uploads here (e.g., via FormData and API)
-        }
-    }
-
-    function uploadFiles() {
-        alert('Files uploaded successfully!');
-        
-    }
-</script>
-
+        </script>
+    </main>
 </body>
 </html>
