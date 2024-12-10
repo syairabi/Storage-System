@@ -266,7 +266,7 @@
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div class="tab active" data-tab="software">Software</div>
                 <div class="tab" data-tab="hardware">Hardware</div>
-                <div class="tab" data-tab="upload">Upload</div>
+                <!-- <div class="tab" data-tab="upload">Upload</div> -->
             </div>
 
             <!-- Search Bar -->
@@ -320,9 +320,9 @@
             <table class="file-list" id="hardwareTable">
                 <thead>
                     <tr>
-                        <th><i class="fas fa-file"></i> Name</th>
-                        <th><i class="fas fa-calendar-alt"></i> Date Modified</th>
-                        <th><i class="fas fa-map-marker-alt"></i> Location</th>
+                        <th>Name</th>
+                        <th>Date Modified</th>
+                        <th>Location</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -341,7 +341,7 @@
         </div>
 
         <!-- Upload Section -->
-        <div id="upload" class="tab-content">
+        <!-- <div id="upload" class="tab-content">
             <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
                 <h2>Upload Your Files</h2>
                 <div
@@ -378,7 +378,7 @@
                     Upload Files
                 </button>
             </div>
-        </div>
+        </div> -->
 
         <script>
             // Tab switching logic
@@ -419,7 +419,7 @@
                 handleFiles(files);
             });
 
-            fileUpload.addEventListener('change', (event) => {
+            /*fileUpload.addEventListener('change', (event) => {
                 const files = event.target.files;
                 handleFiles(files);
             });
@@ -433,7 +433,7 @@
 
             function uploadFiles() {
                 alert('Files uploaded successfully!');
-            }
+            }*/
             
             document.querySelector('.nav-item a[href="/api/auth/login"]').addEventListener('click', function(e) {
             e.preventDefault(); // Prevent direct navigation
