@@ -223,6 +223,45 @@
             background-color: #0056B3;
             color: white;
         }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-btn {
+            padding: 10px 20px;
+            background: #0056B3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f1f1f1;
+            min-width: 175px;
+            border-radius: 5px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -266,14 +305,11 @@
             <div style="display: flex; align-items: center; gap: 10px;">
                 <div class="tab active" data-tab="software">Software</div>
                 <div class="tab" data-tab="hardware">Hardware</div>
-                <!-- <div class="tab" data-tab="upload">Upload</div> -->
+                <div class="tab" data-tab="upload">Upload</div>
             </div>
 
             <!-- Search Bar -->
             <div style="display: flex; align-items: center; gap: 10px;">
-                <button style="background-color: #555; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
-                    <i class="fas fa-plus"></i>
-                </button>
                 <i class="fas fa-search" style="color: #555; font-size: 18px;"></i>
                 <input
                     type="text"
@@ -341,7 +377,7 @@
         </div>
 
         <!-- Upload Section -->
-        <!-- <div id="upload" class="tab-content">
+        <div id="upload" class="tab-content">
             <div style="display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);">
                 <h2>Upload Your Files</h2>
                 <div
@@ -363,22 +399,17 @@
                     Drag and drop files here or click to browse
                 </div>
                 <input type="file" id="fileUpload" multiple style="display: none;" />
-                <button
-                    style="
-                        padding: 10px 20px;
-                        background: #0056B3;
-                        color: white;
-                        border: none;
-                        border-radius: 5px;
-                        font-size: 14px;
-                        cursor: pointer;
-                    "
-                    onclick="uploadFiles()"
-                >
-                    Upload Files
-                </button>
+                <div class="dropdown">
+                    <button class="dropdown-btn">
+                        Upload Files <i class="fas fa-caret-down"></i>
+                    </button>
+                    <div class="dropdown-content">
+                        <a href="#" onclick="uploadFiles('software')">Upload to Software</a>
+                        <a href="#" onclick="uploadFiles('hardware')">Upload to Hardware</a>
+                    </div>
+                </div>
             </div>
-        </div> -->
+        </div>
 
         <script>
             // Tab switching logic
@@ -419,7 +450,7 @@
                 handleFiles(files);
             });
 
-            /*fileUpload.addEventListener('change', (event) => {
+            fileUpload.addEventListener('change', (event) => {
                 const files = event.target.files;
                 handleFiles(files);
             });
@@ -431,9 +462,32 @@
                 }
             }
 
-            function uploadFiles() {
-                alert('Files uploaded successfully!');
-            }*/
+            function uploadFiles(destination) {
+                // Call a function to upload the files to the selected destination (software or hardware)
+                if (destination === 'software') {
+                    // Upload to software
+                    alert('Files uploaded to software successfully!');
+                } else if (destination === 'hardware') {
+                    // Upload to hardware
+                    alert('Files uploaded to hardware successfully!');
+                }
+            }
+
+            // Dropdown functionality
+            document.querySelectorAll('.dropdown').forEach(function(dropdownWrapper) {
+                const dropdownBtn = dropdownWrapper.querySelector('.dropdown-btn');
+                const dropdownContent = dropdownWrapper.querySelector('.dropdown-content');
+
+                dropdownBtn.addEventListener('click', function() {
+                    dropdownWrapper.classList.toggle('show');
+                });
+
+                window.addEventListener('click', function(event) {
+                    if (!event.target.matches('.dropdown-btn')) {
+                        dropdownWrapper.classList.remove('show');
+                    }
+                });
+            });
             
             document.querySelector('.nav-item a[href="/api/auth/login"]').addEventListener('click', function(e) {
             e.preventDefault(); // Prevent direct navigation
