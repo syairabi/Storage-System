@@ -1,3 +1,4 @@
+// src/models/File.ts
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IFile extends Document {
