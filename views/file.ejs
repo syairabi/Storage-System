@@ -175,6 +175,30 @@
         .file-list td i {
             margin-right: 5px;
         }
+
+        .file-actions {
+        display: flex;
+        justify-content: space-between; /* Ensures spacing between Download and right actions */
+        align-items: center; /* Vertically aligns buttons */
+        }
+
+        .right-actions {
+            display: flex;
+        }
+
+        .action-btn {
+            padding: 5px 10px; /* Adjust padding for consistent button size */
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            color: #000; /* Customize button text color */
+        }
+
+        .edit-btn {
+            margin-left: 75px; /* Adds space between Edit and Delete buttons */
+        }
+
+        
         .logout-popup {
             position: fixed;
             top: 50%;
@@ -333,21 +357,35 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Size</th>
                         <th>Date Modified</th>
                         <th>Location</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><i class="fas fa-file"></i> Firewall</td>
-                        <td>9/12/2024</td>
-                        <td>Cloudflare</td>
-                    </tr>
-                    <tr>
-                        <td><i class="fas fa-file"></i> Database</td>
-                        <td>8/12/2024</td>
-                        <td>AWS</td>
-                    </tr>
+                    <% softwarefiles.forEach(function(file) { %>
+                        <tr>
+                            <td>
+                                <i class="fas fa-file file-icon"></i>
+                                <%= file.filename %>
+                            </td>
+                            <td><%= formatFileSize(file.size) %></td>
+                            <td><%= formatDate(file.lastModified) %></td>
+                            <td>HQ</td>
+                            <td class="file-actions">
+                                <a href="/file/download/<%= file._id %>" class="action-btn download-btn">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                                <button onclick="editFile('<%= file._id %>')" class="action-btn edit-btn">
+                                    <i class="fas fa-pencil"></i> Edit
+                                </button>
+                                <button onclick="deleteFile('<%= file._id %>')" class="action-btn delete-btn">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    <% }); %>
                 </tbody>
             </table>
         </div>
@@ -358,21 +396,35 @@
                 <thead>
                     <tr>
                         <th>Name</th>
+                        <th>Size</th>
                         <th>Date Modified</th>
                         <th>Location</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td><i class="fas fa-file"></i> Switches</td>
-                        <td>7/12/2024</td>
-                        <td>HQ</td>
-                    </tr>
-                    <tr>
-                        <td><i class="fas fa-file"></i> Routers</td>
-                        <td>1/12/2024</td>
-                        <td>HQ</td>
-                    </tr>
+                    <% hardwarefiles.forEach(function(file) { %>
+                        <tr>
+                            <td>
+                                <i class="fas fa-file file-icon"></i>
+                                <%= file.filename %>
+                            </td>
+                            <td><%= formatFileSize(file.size) %></td>
+                            <td><%= formatDate(file.lastModified) %></td>
+                            <td>HQ</td>
+                            <td class="file-actions">
+                                <a href="/file/download/<%= file._id %>" class="action-btn download-btn">
+                                    <i class="fas fa-download"></i> Download
+                                </a>
+                                <button onclick="editFile('<%= file._id %>')" class="action-btn edit-btn">
+                                    <i class="fas fa-pencil"></i> Edit
+                                </button>
+                                <button onclick="deleteFile('<%= file._id %>')" class="action-btn delete-btn">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </td>
+                        </tr>
+                    <% }); %>
                 </tbody>
             </table>
         </div>
@@ -456,23 +508,58 @@
                 handleFiles(files);
             });
 
-            function handleFiles(files) {
-                if (files.length) {
-                    alert(`${files.length} file(s) selected.`);
-                    // Handle file uploads here (e.g., via FormData and API)
-                }
+            async function handleFiles(files) {
+    if (files.length) {
+        try {
+            const formData = new FormData();
+            
+            // Append each file to FormData
+            for (let i = 0; i < files.length; i++) {
+                formData.append('file', files[i]);
             }
+            
+            // Store the FormData for later use
+            window.uploadFormData = formData;
+            
+            alert(`${files.length} file(s) selected and ready for upload.`);
+        } catch (error) {
+            console.error('Error preparing files:', error);
+            alert('Error preparing files for upload.');
+        }
+    }
+}
 
-            function uploadFiles(destination) {
-                // Call a function to upload the files to the selected destination (software or hardware)
-                if (destination === 'software') {
-                    // Upload to software
-                    alert('Files uploaded to software successfully!');
-                } else if (destination === 'hardware') {
-                    // Upload to hardware
-                    alert('Files uploaded to hardware successfully!');
-                }
-            }
+async function uploadFiles(destination) {
+    if (!window.uploadFormData) {
+        alert('Please select files first.');
+        return;
+    }
+
+    const endpoint = destination === 'software' 
+        ? '/api/file/software' 
+        : '/api/file/hardware';
+
+    try {
+        const response = await fetch(endpoint, {
+            method: 'POST',
+            body: window.uploadFormData,
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        alert(`Files uploaded to ${destination} successfully!`);
+        
+        // Clear the stored FormData after successful upload
+        window.uploadFormData = null;
+
+    } catch (error) {
+        console.error('Error uploading files:', error);
+        alert(`Error uploading files to ${destination}: ${error.message}`);
+    }
+}
 
             // Dropdown functionality
             document.querySelectorAll('.dropdown').forEach(function(dropdownWrapper) {

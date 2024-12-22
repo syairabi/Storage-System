@@ -9,6 +9,7 @@ export interface IFile extends Document {
   lastModified: Date;
   backupPath?: string;
   backupDate?: Date;
+  category: string;
 }
 
 const FileSchema = new Schema({
@@ -23,7 +24,7 @@ const FileSchema = new Schema({
   uploadedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true
+    required: false
   },
   size: {
     type: Number,
@@ -38,6 +39,9 @@ const FileSchema = new Schema({
   },
   backupDate: {
     type: Date
+  },
+  category: {
+    type: String,
   }
 }, {
   timestamps: true

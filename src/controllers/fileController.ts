@@ -15,6 +15,7 @@ interface AuthRequest extends Request {
     user?: IUser;
 }
 
+
 export class FileController {
     // Upload a new file
     static async uploadFile(req: MulterRequest, res: Response) {
@@ -286,4 +287,81 @@ export class FileController {
             });
         }
     }
+    
+    static async uploadSoftwareFiles(req: MulterRequest, res: Response) {
+        try {
+            if (!req.file) {
+                res.status(400).json({ error: 'No file provided' });
+                return;
+            }
+    
+            const uploadedFile = new File({
+                filename: req.file.originalname,
+                path: req.file.path,
+                size: req.file.size,
+                //uploadedBy: req.user!._id,
+                lastModified: new Date(),
+                category: "Software"
+            });
+    
+            await uploadedFile.save();
+    
+            res.status(201).json({
+                success: true,
+                data: uploadedFile,
+                message: 'Software file uploaded successfully'
+            });
+        } catch (error) {
+            console.error('Software upload error:', error);
+            // Clean up uploaded file if database operation fails
+            if (req.file && fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path);
+            }
+    
+            res.status(500).json({ 
+                success: false,
+                error: 'Error uploading software file',
+                details: error instanceof Error ? error.message : 'Unknown error'
+            });
+        }
+    }
+    
+    static async uploadHardwareFiles(req: MulterRequest, res: Response) {
+        try {
+            if (!req.file) {
+                res.status(400).json({ error: 'No file provided' });
+                return;
+            }
+    
+            const uploadedFile = new File({
+                filename: req.file.originalname,
+                path: req.file.path,
+                size: req.file.size,
+                //uploadedBy: req.user!._id,
+                lastModified: new Date(),
+                category: "Hardware"
+            });
+    
+            await uploadedFile.save();
+    
+            res.status(201).json({
+                success: true,
+                data: uploadedFile,
+                message: 'Hardware file uploaded successfully'
+            });
+        } catch (error) {
+            console.error('Hardware upload error:', error);
+            // Clean up uploaded file if database operation fails
+            if (req.file && fs.existsSync(req.file.path)) {
+                fs.unlinkSync(req.file.path);
+            }
+    
+            res.status(500).json({ 
+                success: false,
+                error: 'Error uploading hardware file',
+                details: error instanceof Error ? error.message : 'Unknown error'
+            });
+        }
+    }
+    
 }

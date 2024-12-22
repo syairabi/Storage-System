@@ -3,6 +3,7 @@ import express from 'express';
 import multer from 'multer';
 import { FileController } from '../controllers/fileController';
 import { auth } from '../middleware/auth';
+import File, { IFile } from '../models/File';
 import { FileUtils } from '../utils/fileUtils';
 import path from 'node:path';
 
@@ -25,8 +26,43 @@ router.get('/homepage', (req, res)=>{
   res.render('homepage.ejs');
 })
 
-router.get('/file', (req, res)=>{
-  res.render('file.ejs');
+const formatFileSize = (bytes: number): string => {
+  if (bytes < 1024) return bytes + ' B';
+  else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  else if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+  else return (bytes / 1073741824).toFixed(1) + ' GB';
+};
+
+const formatDate = (date: Date): string => {
+  return new Date(date).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+  });
+};
+
+router.get('/file', async (req, res)=>{
+  try {
+    const softwarefiles = await File.find({ 
+        category: "Software" 
+    }).sort({ lastModified: -1 });
+
+    const hardwarefiles = await File.find({ 
+      category: "Hardware" 
+  }).sort({ lastModified: -1 });
+
+    res.render('file.ejs', {
+        softwarefiles,
+        hardwarefiles,
+        formatFileSize,
+        formatDate
+    });
+} catch (error) {
+    console.error('Error fetching files:', error);
+    res.status(500).send('Error fetching files');
+}
 })
 
 router.get('/update', (req, res)=>{
@@ -35,6 +71,18 @@ router.get('/update', (req, res)=>{
 router.get('/logout', (req, res)=>{
   res.render('logout.ejs');
 })
+
+router.post('/software', 
+  //auth, 
+  upload.single('file'), // Allow up to 5 files
+  FileController.uploadSoftwareFiles
+);
+
+router.post('/hardware', 
+  //auth, 
+  upload.single('file'), // Allow up to 5 files
+  FileController.uploadHardwareFiles
+);
 
 router.post('/upload', auth, upload.single('file'), FileController.uploadFile);
 router.get('/', auth, FileController.getAllFiles);
