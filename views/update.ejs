@@ -391,7 +391,7 @@
             </a>
         </div>
         <div class="nav-item">
-            <a href="/api/auth/login" class="nav-link">
+            <a href="#" class="nav-link" id="logout-btn">
                 <i class="fas fa-sign-out"></i>
                 <span class="nav-tooltip">Logout</span>
             </a>
@@ -536,6 +536,8 @@
         document.getElementById('backup-btn').addEventListener('click', function(e) {
             e.preventDefault();
 
+        
+
             // Create popup overlay
             const overlayEl = document.createElement('div');
             overlayEl.classList.add('backup-popup-overlay');
@@ -612,6 +614,46 @@
                 // Close popup
                 document.body.removeChild(overlayEl);
                 document.body.removeChild(popupEl);
+            });
+
+            // Close popup if overlay is clicked
+            overlayEl.addEventListener('click', function() {
+                document.body.removeChild(overlayEl);
+                document.body.removeChild(popupEl);
+            });
+        });
+        document.getElementById('logout-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Create popup overlay
+            const overlayEl = document.createElement('div');
+            overlayEl.classList.add('logout-popup-overlay');
+
+            // Create popup
+            const popupEl = document.createElement('div');
+            popupEl.classList.add('logout-popup');
+            popupEl.innerHTML = `
+                <h3>Confirm Logout</h3>
+                <p>Are you sure you want to logout?</p>
+                <div class="logout-popup-buttons">
+                    <button class="logout-popup-btn logout-popup-cancel">Cancel</button>
+                    <button class="logout-popup-btn logout-popup-confirm">Logout</button>
+                </div>
+            `;
+
+            // Append to body
+            document.body.appendChild(overlayEl);
+            document.body.appendChild(popupEl);
+
+            // Cancel button
+            popupEl.querySelector('.logout-popup-cancel').addEventListener('click', function() {
+                document.body.removeChild(overlayEl);
+                document.body.removeChild(popupEl);
+            });
+
+            // Confirm logout button
+            popupEl.querySelector('.logout-popup-confirm').addEventListener('click', function() {
+                window.location.href = '/api/auth/login';
             });
 
             // Close popup if overlay is clicked
