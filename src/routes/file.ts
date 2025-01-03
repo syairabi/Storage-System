@@ -43,6 +43,23 @@ const formatDate = (date: Date): string => {
   });
 };
 
+router.put('/api/file/location/:fileId', async (req, res) => {
+  try {
+    const { fileId } = req.params;
+    const { location } = req.body;
+    
+    const updatedFile = await File.findByIdAndUpdate(
+      fileId,
+      { location },
+      { new: true }
+    );
+    
+    res.json(updatedFile);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update location' });
+  }
+});
+
 router.get('/file', async (req, res)=>{
   try {
     const softwarefiles = await File.find({ 

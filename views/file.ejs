@@ -284,6 +284,27 @@
         .dropdown:hover .dropdown-content {
             display: block;
         }
+        .relative {
+            position: relative;
+        }
+
+        .clean-select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            border: none;
+            background-color: transparent;
+            padding-right: 70px;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right center;
+            background-size: 12px;
+            cursor: pointer;
+        }
+
+        .clean-select:focus {
+            outline: none;
+        }
     </style>
 </head>
 <body>
@@ -369,7 +390,17 @@
                             </td>
                             <td><%= formatFileSize(file.size) %></td>
                             <td><%= formatDate(file.lastModified) %></td>
-                            <td>HQ</td>
+                            <td>
+                                <select 
+                                    onchange="updateLocation('<%= file._id %>', this.value)" 
+                                    class="clean-select"
+                                >
+                                    <option value="HQ" <%= file.location === 'HQ' ? 'selected' : '' %>>HQ</option>
+                                    <option value="Section 6" <%= file.location === 'Section 6' ? 'selected' : '' %>>Section 6</option>
+                                    <option value="Section 6B" <%= file.location === 'Section 6B' ? 'selected' : '' %>>Section 6B</option>
+                                    <option value="Section 7" <%= file.location === 'Section 7' ? 'selected' : '' %>>Section 7</option>
+                                </select>
+                            </td>
                             <td class="file-actions">
                                 <a href="/file/download/<%= file._id %>" class="action-btn download-btn">
                                     <i class="fas fa-download"></i> Download
@@ -408,7 +439,17 @@
                             </td>
                             <td><%= formatFileSize(file.size) %></td>
                             <td><%= formatDate(file.lastModified) %></td>
-                            <td>HQ</td>
+                            <td>
+                                <select 
+                                    onchange="updateLocation('<%= file._id %>', this.value)" 
+                                    class="clean-select"
+                                >
+                                    <option value="HQ" <%= file.location === 'HQ' ? 'selected' : '' %>>HQ</option>
+                                    <option value="Section 6" <%= file.location === 'Section 6' ? 'selected' : '' %>>Section 6</option>
+                                    <option value="Section 6B" <%= file.location === 'Section 6B' ? 'selected' : '' %>>Section 6B</option>
+                                    <option value="Section 7" <%= file.location === 'Section 7' ? 'selected' : '' %>>Section 7</option>
+                                </select>
+                            </td>
                             <td class="file-actions">
                                 <a href="/file/download/<%= file._id %>" class="action-btn download-btn">
                                     <i class="fas fa-download"></i> Download
@@ -615,6 +656,27 @@ async function uploadFiles(destination) {
                 document.body.removeChild(popupEl);
             });
         });
+        async function updateLocation(fileId, newLocation) {
+    try {
+        const response = await fetch(`/api/file/location/${fileId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ location: newLocation })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to update location');
+        }
+
+        // Optionally refresh the page or show a success message
+        // window.location.reload();
+    } catch (error) {
+        console.error('Error updating location:', error);
+        alert('Failed to update location');
+    }
+}
         </script>
     </main>
 </body>
