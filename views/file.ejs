@@ -91,6 +91,7 @@
             margin-left: 70px;
             padding: 20px;
             background: #f5f5f5;
+            min-width: 0;
         }
 
         .content-header {
@@ -153,46 +154,139 @@
 
         .file-list th,
         .file-list td {
-            padding: 10px;
+            padding: 8px;
             text-align: left;
             border-bottom: 1px solid #ddd;
             white-space: nowrap;
             vertical-align: middle;
         }
 
-        .file-list tr {
-            height: 45px; /* Set a fixed height for rows */
+        .file-list th:nth-child(1),
+        .file-list td:nth-child(1) {
+            width: 52%; /* Name column */
         }
 
+        .file-list th:nth-child(2),
+        .file-list td:nth-child(2) {
+            width: 8%;
+        } /* Size column */
+        .file-list th:nth-child(3),
+        .file-list td:nth-child(3) {
+            width: 13%;
+            word-wrap: break-word;
+            white-space: normal;
+        } /* Date Modified column */
+        .file-list th:nth-child(4),
+        .file-list td:nth-child(4) {
+            width: 10%;
+        } /* Location column */
+        .file-list th:nth-child(5),
+        .file-list td:nth-child(5) { /* Actions column */
+            text-align: left; /* Align content to the right */
+            padding-right: 15px;
+        }
+
+        .file-name {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-list tr {
+            height: 45px; 
+        }
+
+        @media screen and (max-width: 1024px) {
+            .main-content {
+                padding: 10px;
+            }
+
+            .file-list th,
+            .file-list td {
+                padding: 6px;
+                font-size: 13px;
+            }
+
+            .file-actions {
+                display: flex;
+                justify-content: flex-end;
+                gap: 4px;
+                /* min-height: 25px; */
+            }
+
+            .action-btn {
+                padding: 4px 8px;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            .action-btn i {
+                margin-right: 4px;
+                font-size: 12px;
+            }
+
+            .download-btn,
+            .edit-btn,
+            .delete-btn {
+                display: inline-flex;
+                align-items: center;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .sidebar {
+                width: 50px;
+            }
+
+            .main-content {
+                margin-left: 50px;
+            }
+
+            .content-header h1 {
+                font-size: 20px;
+            }
+
+            .file-actions {
+                gap: 2px;
+            }
+
+            .action-btn {
+                padding: 3px 6px;
+            }
+        }
+
+        /* Action Buttons Styling */
         .file-actions {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
             min-height: 25px;
+            justify-content: flex-start;
         }
 
         .action-btn {
-            height: 100%;
-            padding: 5px 10px;
-            text-decoration: none;
+            padding: 5px 8px;
+            white-space: nowrap;
             display: inline-flex;
             align-items: center;
-            color: #000;
-        }
-
-        .action-btn i {
-            margin-right: 8px; 
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
         }
 
         .download-btn {
-            margin-left: -10px; 
-        }
-
-        .delete-btn {
-            margin-left:  10px; 
+            color: #0056B3;
         }
 
         .edit-btn {
-            margin-left:  76px; 
+            color: #28a745;
+        }
+
+        .delete-btn {
+            color: #dc3545;
         }
         
         .logout-popup {
@@ -294,7 +388,7 @@
             appearance: none;
             border: none;
             background-color: transparent;
-            padding-right: 70px;
+            padding-right: 25px;
             background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right center;
@@ -385,8 +479,10 @@
                     <% softwarefiles.forEach(function(file) { %>
                         <tr>
                             <td>
-                                <i class="fas fa-file file-icon"></i>
-                                <%= file.filename %>
+                                <span class="file-name">
+                                    <i class="fas fa-file file-icon"></i>
+                                    <%= file.filename %>
+                                </span>
                             </td>
                             <td><%= formatFileSize(file.size) %></td>
                             <td><%= formatDate(file.lastModified) %></td>
@@ -434,8 +530,10 @@
                     <% hardwarefiles.forEach(function(file) { %>
                         <tr>
                             <td>
-                                <i class="fas fa-file file-icon"></i>
-                                <%= file.filename %>
+                                <span class="file-name">
+                                    <i class="fas fa-file file-icon"></i>
+                                    <%= file.filename %>
+                                </span>
                             </td>
                             <td><%= formatFileSize(file.size) %></td>
                             <td><%= formatDate(file.lastModified) %></td>
