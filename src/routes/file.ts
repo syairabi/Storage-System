@@ -103,8 +103,8 @@ router.post('/hardware',
 
 router.post('/upload', auth, upload.single('file'), FileController.uploadFile);
 router.get('/', auth, FileController.getAllFiles);
-router.get('/download/:id', auth, FileController.downloadFile);
+router.get('/download/:id', FileController.downloadFile);
 router.post('/backup/:id', auth, FileController.createBackup);
-router.delete('/:id', auth, FileController.deleteFile);
+router.delete('/delete/:id', FileController.deleteFile);
 
 export default router;

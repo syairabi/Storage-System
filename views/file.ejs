@@ -498,7 +498,7 @@
                                 </select>
                             </td>
                             <td class="file-actions">
-                                <a href="/file/download/<%= file._id %>" class="action-btn download-btn">
+                                <a href="/api/file/download/<%= file._id %>" class="action-btn download-btn">
                                     <i class="fas fa-download"></i> Download
                                 </a>
                                 <button onclick="editFile('<%= file._id %>')" class="action-btn edit-btn">
@@ -549,7 +549,7 @@
                                 </select>
                             </td>
                             <td class="file-actions">
-                                <a href="/file/download/<%= file._id %>" class="action-btn download-btn">
+                                <a href="/api/file/download/<%= file._id %>" class="action-btn download-btn">
                                     <i class="fas fa-download"></i> Download
                                 </a>
                                 <button onclick="editFile('<%= file._id %>')" class="action-btn edit-btn">
@@ -645,57 +645,105 @@
             });
 
             async function handleFiles(files) {
-    if (files.length) {
-        try {
-            const formData = new FormData();
-            
-            // Append each file to FormData
-            for (let i = 0; i < files.length; i++) {
-                formData.append('file', files[i]);
+                if (files.length) {
+                    try {
+                        const formData = new FormData();
+                        
+                        // Append each file to FormData
+                        for (let i = 0; i < files.length; i++) {
+                            formData.append('file', files[i]);
+                        }
+                        
+                        // Store the FormData for later use
+                        window.uploadFormData = formData;
+                        
+                        alert(`${files.length} file(s) selected and ready for upload.`);
+                    } catch (error) {
+                        console.error('Error preparing files:', error);
+                        alert('Error preparing files for upload.');
+                    }
+                }
             }
-            
-            // Store the FormData for later use
-            window.uploadFormData = formData;
-            
-            alert(`${files.length} file(s) selected and ready for upload.`);
-        } catch (error) {
-            console.error('Error preparing files:', error);
-            alert('Error preparing files for upload.');
-        }
-    }
-}
 
-async function uploadFiles(destination) {
-    if (!window.uploadFormData) {
-        alert('Please select files first.');
-        return;
-    }
+            async function uploadFiles(destination) {
+                if (!window.uploadFormData) {
+                    alert('Please select files first.');
+                    return;
+                }
 
-    const endpoint = destination === 'software' 
-        ? '/api/file/software' 
-        : '/api/file/hardware';
+                const endpoint = destination === 'software' 
+                    ? '/api/file/software' 
+                    : '/api/file/hardware';
 
-    try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            body: window.uploadFormData,
-        });
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        body: window.uploadFormData,
+                    });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
 
-        const result = await response.json();
-        alert(`Files uploaded to ${destination} successfully!`);
-        
-        // Clear the stored FormData after successful upload
-        window.uploadFormData = null;
+                    const result = await response.json();
+                    alert(`Files uploaded to ${destination} successfully!`);
+                    
+                    // Clear the stored FormData after successful upload
+                    window.uploadFormData = null;
 
-    } catch (error) {
-        console.error('Error uploading files:', error);
-        alert(`Error uploading files to ${destination}: ${error.message}`);
-    }
-}
+                } catch (error) {
+                    console.error('Error uploading files:', error);
+                    alert(`Error uploading files to ${destination}: ${error.message}`);
+                }
+            }
+
+            function deleteFile(fileId) {
+                if (confirm('Are you sure you want to delete this file?')) {
+                    fetch(`/api/file/delete/${fileId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            // Find and remove the table row
+                            const row = document.querySelector(`tr[data-file-id="${fileId}"]`);
+                            if (row) {
+                                row.remove();
+                            }
+                            // Show success message
+                            showNotification('File deleted successfully', 'success');
+                            window.location.reload()
+                        } else {
+                            throw new Error(data.message || 'Failed to delete file');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Failed to delete file', 'error');
+                    });
+                }
+            }
+
+            function showNotification(message, type) {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                // Remove notification after 3 seconds
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
 
             // Dropdown functionality
             document.querySelectorAll('.dropdown').forEach(function(dropdownWrapper) {
@@ -755,26 +803,26 @@ async function uploadFiles(destination) {
             });
         });
         async function updateLocation(fileId, newLocation) {
-    try {
-        const response = await fetch(`/api/file/location/${fileId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ location: newLocation })
-        });
+            try {
+                const response = await fetch(`/api/file/location/${fileId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ location: newLocation })
+                });
 
-        if (!response.ok) {
-            throw new Error('Failed to update location');
+                if (!response.ok) {
+                    throw new Error('Failed to update location');
+                }
+
+                // Optionally refresh the page or show a success message
+                // window.location.reload();
+            } catch (error) {
+                console.error('Error updating location:', error);
+                alert('Failed to update location');
+            }
         }
-
-        // Optionally refresh the page or show a success message
-        // window.location.reload();
-    } catch (error) {
-        console.error('Error updating location:', error);
-        alert('Failed to update location');
-    }
-}
         </script>
     </main>
 </body>
