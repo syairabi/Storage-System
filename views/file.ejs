@@ -690,6 +690,7 @@
                     
                     // Clear the stored FormData after successful upload
                     window.uploadFormData = null;
+                    window.location.reload()
 
                 } catch (error) {
                     console.error('Error uploading files:', error);
